@@ -1,0 +1,5 @@
+chromadb
+requests
+streamlit
+sentence_transformers
+pydantic==1.10.13
