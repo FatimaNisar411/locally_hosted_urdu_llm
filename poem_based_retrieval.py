@@ -27,7 +27,7 @@ def get_poem_chunks(poem_title, collection):
     """
     Pull all chunks where poem_title == requested poem.
     """
-    results = collection.get(where={"poem_title": poem_title})
+    results = collection.get(where={"poem": poem_title})
     
 
 
@@ -75,11 +75,11 @@ test_couplet = "چومتا ہے تیری پیشانی کو جھک کر اسما�
 
 
 result = retrieve_poem(test_couplet, collection)
-results = collection.get(include=["metadatas"])
-print(results["metadatas"])
 
 print("Title:", result["title"])
 print("----")
 for c in result["chunks"]:
     print(c[:200])  # show first 200 chars
     print("----")
+results = collection.get(include=["metadatas"])
+print(results["metadatas"])

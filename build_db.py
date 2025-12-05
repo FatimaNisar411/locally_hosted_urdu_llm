@@ -213,19 +213,24 @@ CHUNK_SIZE = 3500
 CHUNK_OVERLAP = 350
 
 POEM_TITLES = [
-    "ہالہ", "گل رنگیں", "عہد طفلی", "مرزا غالب", "ابر کوہسار",
+    "ہمالہ", "گل رنگیں", "عہد طفلی", "مرزا غالب", "ابر کوہسار",
     "ایک مکڑا اور مکھی", "ایک پہاڑاورگلہری", "ایک گائے اور بکری",
     "بچے کی دعا", "ہمدردی"
 ]
 
 def find_poem_ranges(text, poem_titles):
-    """Find start and end indices of each poem."""
+    """Find start and end indices of each poem, in order, using first occurrence of each title."""
     starts = []
+    search_pos = 0
     for title in poem_titles:
-        match = re.search(re.escape(title), text)
+        match = re.search(re.escape(title), text[search_pos:])
         if match:
-            starts.append((match.start(), title))
-    starts.sort()
+            start_idx = search_pos + match.start()
+            starts.append((start_idx, title))
+            search_pos = start_idx + 1  # move forward to avoid matching same title again
+        else:
+            # If not found, skip (or you can handle as needed)
+            print(f"Warning: Poem title '{title}' not found in text.")
     
     ranges = []
     for i, (start, title) in enumerate(starts):
