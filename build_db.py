@@ -203,6 +203,13 @@ import chromadb
 from chromadb.utils import embedding_functions
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+# Disable HuggingFace symlink warnings on Windows
+os.environ['HF_HUB_DISABLE_SYMLINKS_WARNING'] = '1'
+# Set HuggingFace to use local cache only
+os.environ['HF_HUB_OFFLINE'] = '0'  # Set to '1' if model is fully cached locally
+
+
+
 # --- CONFIG ---
 DATA_FILE = "tashreeh_sample.txt"
 DB_DIR = "db"

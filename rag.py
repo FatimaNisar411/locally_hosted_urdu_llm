@@ -99,41 +99,47 @@ def rag_query(query, collection):
     # ------------------------------------------------
     # 3. Build LLM prompt (improved)
     # ------------------------------------------------
-    prompt = f"""
-You are an expert on Bang-e-Dara by Allama Iqbal.
+    # === Prompt ===
+    system_prompt = """
+آپ اردو ادب اور بالِ جبرئیل / بانگِ درا کے ماہر ہیں۔
+دیے گئے کونٹیکسٹ (تشریح) کی مدد سے صارف کے سوال کا بہترین ممکنہ جواب دیں۔
 
-The context contains the FULL tashreeh of the poem, but the user is asking about ONE specific couplet.
-You must extract ONLY the explanation for the user's couplet.
-
-Context (تشریح):
-{context}
-
-User's Couplet:
-{query}
-
-Instructions:
-- Focus ONLY on the user's couplet
-- Use only the relevant part from the provided context
-- Do NOT explain the whole nazm
-- Keep it clear, correct, and simple
-- Include meaning, message, and any philosophical point if mentioned in context
-- No repetition
-
-Answer in clear Urdu:
+— ہمیشہ صاف، خوبصورت اردو میں لکھیں
+— صرف فراہم کردہ تشریح سے جواب بنائیں
+— بے وجہ لمبی تکرار نہ کریں
+— مفہوم، پیغام، اور فلسفہ واضح کریں
 """
 
-    # ------------------------------------------------
-    # 4. Send to local Llama
-    # ------------------------------------------------
-    print("\n🤖 Sending to Llama 3.1:8b...")
+    user_prompt = f"""
+سوال:
+{query}
+
+تشریح (Context):
+{context}
+
+براہ کرم اس کی وضاحت اردو میں کریں:
+"""
+
+    # === Send to ALIF via LM Studio ===
+    print("\n🤖 Sending to Alif (LM Studio)...")
+
     start_time = time.time()
+    
     response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={"model": "llama3.1:8b", "prompt": prompt, "stream": False}
-    )
+        "http://localhost:1234/v1/chat/completions",  # or use your LAN IP
+        json={
+            "model": "alif-1.0-8b-instruct",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
+        }
+    ).json()
+
     llm_time = time.time() - start_time
-
-    print(f"⏱️ LLM response took: {llm_time:.2f}s")
-    print(f"✅ Total time: {detection_time + llm_time:.2f}s\n")
-
-    return response.json()["response"]
+    print(f"⏱️  LLM took: {llm_time:.2f}s")
+    
+    answer = response['choices'][0]['message']['content']
+    print(f"\n✅ Response: {answer[:200]}...\n")
+    
+    return answer
