@@ -71,8 +71,8 @@ from chromadb import PersistentClient
 client = PersistentClient(path="db")
 collection = client.get_collection("tashreeh_chroma_bgem3")
 
-test_couplet = "چومتا ہے تیری پیشانی کو جھک کر اسماں، اے ممالہ! اے فصیلِ کشورِ ہندوستاں"
-
+# test_couplet = "چومتا ہے تیری پیشانی کو جھک کر اسماں، اے ممالہ! اے فصیلِ کشورِ ہندوستاں"
+test_couplet = "اے گل رنگیں ترے پہلو میں شاید دل نہیں"
 
 result = retrieve_poem(test_couplet, collection)
 
